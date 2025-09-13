@@ -77,6 +77,7 @@ gets(char *buf, int max)
     if(cc < 1)
       break;
     buf[i++] = c;
+
     if(c == '\n' || c == '\r')
       break;
   }

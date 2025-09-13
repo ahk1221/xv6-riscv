@@ -49,10 +49,36 @@ struct backcmd {
   struct cmd *cmd;
 };
 
+#define HISTSIZE 20 // History size
+
+char *history[HISTSIZE]; // History buffer
+int history_count = 0;   // Number of commands in history
+int history_nav_index = -1; // Current navigation index (-1: not navigating)
+
+
 int fork1(void);  // Fork but panics on failure.
 void panic(char*);
 struct cmd *parsecmd(char*);
 void runcmd(struct cmd*) __attribute__((noreturn));
+void add_history(char* cmd);
+
+// Function to add a command to history
+void add_history(char *cmd) {
+    char *copy = malloc(strlen(cmd) + 1);
+    if (!copy) return; // Skip if malloc fails
+    strcpy(copy, cmd);
+
+    if (history_count < HISTSIZE) {
+      history[history_count++] = copy;
+    } else {
+      // Shift history to remove the oldest command
+      free(history[0]);
+      for (int i = 0; i < HISTSIZE - 1; i++) {
+        history[i] = history[i + 1];
+      }
+      history[HISTSIZE - 1] = copy;
+    }
+  }
 
 // Execute cmd.  Never returns.
 void
@@ -158,6 +184,39 @@ main(void)
 
   // Read and run input commands.
   while(getcmd(buf, sizeof(buf)) >= 0){
+
+    if (buf[0] == '!' && buf[1] == '!') {
+      if (history_count == 0) {
+        fprintf(2, "no history\n");
+        continue;
+      }
+
+      if (history_nav_index < 0) {
+        history_nav_index = history_count - 1;
+      } else if (history_nav_index > 0) {
+        history_nav_index--;
+      } else {
+        fprintf(2, "already at oldest history\n");
+        continue;
+      }
+      strcpy(buf, history[history_nav_index]);
+      write(2, "running command: ", 18);
+      write(2, history[history_nav_index], strlen(history[history_nav_index]));
+    } 
+    else if (buf[0] == '@' && buf[1] == '@') {
+      if (history_nav_index < 0 || history_nav_index >= history_count - 1) {
+        fprintf(2, "no next history\n");
+        history_nav_index = -1;
+        continue;
+      } else {
+        history_nav_index++;
+        strcpy(buf, history[history_nav_index]);
+      }
+    } else {
+      // Reset navigation index for new commands
+      history_nav_index = -1;
+    }
+    
     char *cmd = buf;
     while (*cmd == ' ' || *cmd == '\t')
       cmd++;
@@ -172,7 +231,10 @@ main(void)
       if(fork1() == 0)
         runcmd(parsecmd(cmd));
       wait(0);
+      // Add executed command to history
+      add_history(buf);
     }
+
   }
   exit(0);
 }
