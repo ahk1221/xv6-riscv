@@ -7,6 +7,24 @@
 #include "proc.h"
 
 uint64
+sys_rcycle(void)
+{
+  return r_cycle();
+}
+
+uint64
+sys_rtime(void)
+{
+  return r_time();
+}
+
+uint64
+sys_rinstret(void)
+{
+  return r_instret();
+}
+
+uint64
 sys_exit(void)
 {
   int n;

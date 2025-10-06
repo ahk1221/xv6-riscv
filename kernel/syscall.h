@@ -35,3 +35,8 @@
 #define SYS_recv      32
 #define SYS_pgpte     33
 #define SYS_kpgtbl    34
+
+
+#define SYS_rtime  35
+#define SYS_rcycle 36
+#define SYS_rinstret 37

@@ -284,6 +284,24 @@ r_time()
   return x;
 }
 
+// machine cycle counter (since reset)
+static inline uint64
+r_cycle()
+{
+  uint64 x;
+  asm volatile("csrr %0, cycle" : "=r" (x) );
+  return x;
+}
+
+// instructions retired counter (since reset)
+static inline uint64
+r_instret()
+{
+  uint64 x;
+  asm volatile("csrr %0, instret" : "=r" (x) );
+  return x;
+}
+
 // enable device interrupts
 static inline void
 intr_on()

@@ -101,6 +101,9 @@ extern uint64 sys_unlink(void);
 extern uint64 sys_link(void);
 extern uint64 sys_mkdir(void);
 extern uint64 sys_close(void);
+extern uint64 sys_rcycle(void);
+extern uint64 sys_rtime(void);
+extern uint64 sys_rinstret(void);
 
 #ifdef LAB_NET
 extern uint64 sys_bind(void);
@@ -137,6 +140,9 @@ static uint64 (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_rcycle]  sys_rcycle,
+[SYS_rtime]   sys_rtime,
+[SYS_rinstret] sys_rinstret,
 #ifdef LAB_NET
 [SYS_bind] sys_bind,
 [SYS_unbind] sys_unbind,
