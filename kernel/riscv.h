@@ -385,6 +385,12 @@ typedef uint64 *pagetable_t; // 512 PTEs
 #define SUPERPGROUNDUP(sz)  (((sz)+SUPERPGSIZE-1) & ~(SUPERPGSIZE-1))
 #endif
 
+// Megapage constants for superpages
+#define MEGAPGSIZE (2 * (1 << 20)) // 2MB pages
+#define MEGAPGSHIFT 21              // 21 bits for 2MB alignment
+#define MEGAPGROUNDUP(sz)  (((sz)+MEGAPGSIZE-1) & ~(MEGAPGSIZE-1))
+#define MEGAPGROUNDDOWN(a) (((a)) & ~(MEGAPGSIZE-1))
+
 #define PGROUNDUP(sz)  (((sz)+PGSIZE-1) & ~(PGSIZE-1))
 #define PGROUNDDOWN(a) (((a)) & ~(PGSIZE-1))
 
